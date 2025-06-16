@@ -1,13 +1,17 @@
 ''' This Project will be amazing more or less from the greek wine group
 
 Using Ogimet to get a METAR/TAF
-and check for correct METAR & TAF using DWD-Guidelines (btw use .txt-file) ??'''
+and check for correct METAR & TAF using DWD-Guidelines (btw use .txt-file) ??
+Finish this until August '''
 
-
+from datetime import datetime, date, time, timezone
 import datetime as dt
+
 from urllib import request
 import urllib.request
 import os
+
+from pathlib import Path
 
 def Generate_request(icao:str,name:str,auto:bool,
         year:int,month:int,day:int,hour:int,minute:int,
@@ -58,21 +62,24 @@ def Get_file(url:str,icao:str,
               + '.txt')
     print(d_path)
 
-    if os.path.exists(d_path) == False:
+    a_path = Path(d_path)
+
+
+    if os.path.exists(a_path) == False:
         connect_to_url = request.urlopen(url)
         url_status = connect_to_url.code
         if url_status == 200:
             print('Download file')
-            urllib.request.urlretrieve(url, d_path)  # This Command save the file into the folder...
+            urllib.request.urlretrieve(url, a_path)  # This Command save the file into the folder...
             print('Download finished!')
-            return d_path
+            return a_path
         else:
             print("Source is offline or something went wrong!")
             print(url_status)
-            return d_path
+            return a_path
     else:
         print('File already exists! No Download...')
-        return d_path
+        return a_path
 
 def Gen_Metar_from_file(path:str):
     ''' This Function will generate the METAR & TAF from the OGIMET-File and return a METAR-LIST and TAF-LIST '''
@@ -84,8 +91,10 @@ def Gen_Metar_from_file(path:str):
 
 
 
-date = dt.date.today()
+date = datetime.now()
+date2 = datetime.now(timezone.utc)
 print(date.strftime('%a %d %b %Y %H:%M'))
+print(date2.strftime('%a %d %b %Y %H:%M'))
 
 url = Generate_request('EDDW','Bremen',True,
                                2025,6,7,11,0,
